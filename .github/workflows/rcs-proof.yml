@@ -1,0 +1,83 @@
+name: "RCS consent proof"
+permissions: {}
+
+on:
+  push:
+    branches:
+      - keeltrace/2994-rcs-proof-ci
+  workflow_dispatch:
+
+jobs:
+  focused-test:
+    name: "Focused RCS semantics JUnit"
+    runs-on: ubuntu-latest
+    env:
+      GRADLE_MICROG_VERSION_WITHOUT_GIT: 1
+    steps:
+      - name: "Free disk space"
+        run: |
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /opt/hostedtoolcache/go
+          df -h
+      - name: "Checkout sources"
+        uses: actions/checkout@v7
+      - name: "Setup Java"
+        uses: actions/setup-java@v5.7.0
+        with:
+          distribution: "temurin"
+          java-version: "17"
+      - name: "Setup Gradle"
+        uses: gradle/actions/setup-gradle@v6
+      - name: "Run focused JUnit class"
+        run: >-
+          ./gradlew :play-services-constellation-core:testDebugUnitTest
+          --tests org.microg.gms.constellation.core.RcsAutoConsentRequestSemanticsTest
+          --info
+
+  constellation-lint:
+    name: "Constellation lint Debug"
+    runs-on: ubuntu-latest
+    env:
+      GRADLE_MICROG_VERSION_WITHOUT_GIT: 1
+    steps:
+      - name: "Free disk space"
+        run: |
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /opt/hostedtoolcache/go
+          df -h
+      - name: "Checkout sources"
+        uses: actions/checkout@v7
+      - name: "Setup Java"
+        uses: actions/setup-java@v5.7.0
+        with:
+          distribution: "temurin"
+          java-version: "17"
+      - name: "Setup Gradle"
+        uses: gradle/actions/setup-gradle@v6
+      - name: "Lint changed module"
+        run: "./gradlew :play-services-constellation-core:lintDebug --info"
+
+  release-assemble:
+    name: "Independent assembleRelease"
+    runs-on: ubuntu-latest
+    env:
+      GRADLE_MICROG_VERSION_WITHOUT_GIT: 1
+    steps:
+      - name: "Free disk space"
+        run: |
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo rm -rf /opt/hostedtoolcache/go
+          df -h
+      - name: "Checkout sources"
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: "Setup Java"
+        uses: actions/setup-java@v5.7.0
+        with:
+          distribution: "temurin"
+          java-version: "17"
+      - name: "Setup Gradle"
+        uses: gradle/actions/setup-gradle@v6
+      - name: "Assemble Release independently"
+        run: "./gradlew assembleRelease --info"
