@@ -92,7 +92,8 @@ class ServiceEntitlementBuilder(
                     addQueryParameter("EAP_ID", eapId)
                 }
             }
-            addQueryParameter("terminal_id", terminalId ?: req.terminal_id)
+            val resolvedTerminalId = req.terminal_id.takeIf { it.isNotEmpty() } ?: terminalId.orEmpty()
+            addQueryParameter("terminal_id", resolvedTerminalId)
             if (req.gid1.isNotEmpty()) {
                 addQueryParameter("GID1", req.gid1)
             } else if ((req.entitlement_version.toBigDecimalOrNull()?.toInt() ?: 0) >= 12) {
