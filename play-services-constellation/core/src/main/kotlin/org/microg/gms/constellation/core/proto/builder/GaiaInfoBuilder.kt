@@ -78,8 +78,7 @@ suspend fun GaiaToken.Companion.getList(context: Context): List<GaiaToken> =
                 if (!token.isNullOrBlank()) GaiaToken(token = token) else null
 
             } catch (e: Exception) {
-                Log.w(TAG, "Could not retrieve Gaia token for account ${account.name}
-", e)
+                Log.w(TAG, "Could not retrieve Gaia token for account ${account.name}", e)
                 null
             }
         }
