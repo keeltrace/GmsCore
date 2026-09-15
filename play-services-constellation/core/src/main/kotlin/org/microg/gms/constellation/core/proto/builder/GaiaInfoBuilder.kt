@@ -27,7 +27,7 @@ suspend operator fun GaiaSignals.Companion.invoke(context: Context): GaiaSignals
 
             for (account in accounts) {
                 var id = accountManager.getUserData(account, "GoogleUserId")
-                if (id == "") {
+                if (id.isNullOrEmpty()) {
                     try {
                         val future = accountManager.getAuthToken(
                             account,
@@ -78,7 +78,8 @@ suspend fun GaiaToken.Companion.getList(context: Context): List<GaiaToken> =
                 if (!token.isNullOrBlank()) GaiaToken(token = token) else null
 
             } catch (e: Exception) {
-                Log.w(TAG, "Could not retrieve Gaia token for account ${account.name}", e)
+                Log.w(TAG, "Could not retrieve Gaia token for account ${account.name}
+", e)
                 null
             }
         }
